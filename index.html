@@ -46,7 +46,7 @@ button.main:active{filter:brightness(.9)}
 button.main.alt{background:var(--btn);color:var(--tx)}
 button.ghost,button.ghost:active{border-color:transparent;background:transparent;color:var(--tx);text-decoration:underline;box-shadow:none;transform:none;filter:none}
 .stepper{display:flex;align-items:center;gap:4px}
-.stepper button{width:42px;flex:none;font-size:20px;padding:5px}
+.stepper button{width:42px;flex:none;font-size:20px;padding:0;display:flex;align-items:center;justify-content:center;line-height:1}
 .stepper .v{flex:1;text-align:center;font-size:24px;font-weight:700}
 .tabs{display:flex;gap:8px}
 .tabs button{flex:1;padding:8px}
@@ -492,7 +492,7 @@ table td, table th { text-align: center !important; }
   --ok:#4f6b00;--bad:#d63a1f;--c1:#6d8a00;--c2:#e0481f;--c3:#1f78d6;--c4:#9a4fd6;
   --go:#2f8a3d;--gotx:#ffffff;--stop:#d63a1f;
   --card:#ffffff;--ln:#e2e2d9;--ln2:#c4c4ba;--ln3:#d0d0c6;--fld:#f0f0ea;
-  --bt:#ffffff;--press:rgba(0,0,0,.07);--prihov:#d3e82c;--prib:#b7cc1c;--acc:#4f6b00;
+  --bt:#ffffff;--press:rgba(0,0,0,.07);--prihov:#d3e82c;--prib:#b7cc1c;--acc:#e8ff3a;
   --selbg:#eef6b8;--flash:rgba(150,180,0,.18);--glow:rgba(0,0,0,0);
   --ring:#dcdcd2;--tb:1.5px solid rgba(20,20,22,.35);--thbg:rgba(20,20,22,.06);
   color-scheme:light;
@@ -1175,7 +1175,7 @@ function home(){
     h+='<div class="card"><h2>Ножей в подходе</h2><div class="stepper"><button data-c="chg(\'knives\',-1)">−</button><div class="v">'+cfg.knives+'</div><button data-c="chg(\'knives\',1)">+</button></div></div></div>';
     h+='<div class="card"><h2>Техника</h2><div class="row">'+TECH.map(function(t,i){return '<button class="'+(cfg.tech==i?'on':'')+'" data-c="cfg.tech='+i+';save();draw()">'+t+'</button>'}).join('')+'</div></div>';
     h+='<div class="card"><h2>Рука</h2><div class="row">'+HAND.map(function(n,i){return '<button class="'+((cfg.hand|0)==i?'on':'')+'" data-c="cfg.hand='+i+';sHand='+i+';save();draw()">'+n+'</button>'}).join('')+'</div></div>';
-    h+='<div class="card"><h2>Дистанция</h2><div class="stepper"><button data-c="chg(\'dist\',-1)">−</button><div class="v">'+cfg.dist+' <small>м</small></div><button data-c="chg(\'dist\',1)">+</button></div></div>';
+    h+='<div class="card"><h2>Дистанция, м</h2><div class="stepper"><button data-c="chg(\'dist\',-1)">−</button><div class="v">'+cfg.dist+'</div><button data-c="chg(\'dist\',1)">+</button></div></div>';
     h+='<button class="main" data-c="start()">Начать тренировку</button>';
   return h}
 
@@ -1347,7 +1347,7 @@ function pickSig(i){if(!snd||sig!==i){snd=true;sig=i;sv('kt2_snd',true);sv('kt2_
 function togSnd(){if(!snd)return;snd=false;sv('kt2_snd',false);draw(true)}
 
 /* ---------- настройки ---------- */
-function chg(k,d){var v=Math.max(LIM[k][0],Math.min(LIM[k][1],cfg[k]+d));if(v===cfg[k])return;cfg[k]=v;save();var e=document.getElementById('v_'+k);if(e)e.innerHTML=v+(k==='dist'?' <small>м</small>':'')}
+function chg(k,d){var v=Math.max(LIM[k][0],Math.min(LIM[k][1],cfg[k]+d));if(v===cfg[k])return;cfg[k]=v;save();var e=document.getElementById('v_'+k);if(e)e.innerHTML=v}
 var repT=null,rep=null;
 function stopRep(){clearTimeout(repT);clearInterval(rep)}
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('button.sb');if(!b)return;var k=b.dataset.k,d=+b.dataset.d;chg(k,d);stopRep();repT=setTimeout(function(){rep=setInterval(function(){chg(k,d)},90)},420)});
@@ -1356,7 +1356,7 @@ window.addEventListener('blur',stopRep);
 ['pointerup','touchend'].forEach(function(ev){document.addEventListener(ev,function(){try{initAudio()}catch(e){}},{passive:true})});
 document.addEventListener('contextmenu',function(e){if(e.target.closest&&e.target.closest('.sb'))e.preventDefault()});
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button.sb');if(b&&e.detail===0)chg(b.dataset.k,+b.dataset.d)});
-function stp(k,l){return '<div class="card"><h2>'+l+'</h2><div class="stepper"><button class="sb" data-k="'+k+'" data-d="-1" aria-label="Меньше">−</button><div class="v" id="v_'+k+'">'+cfg[k]+(k==='dist'?' <small>м</small>':'')+'</div><button class="sb" data-k="'+k+'" data-d="1" aria-label="Больше">+</button></div></div>'}
+function stp(k,l){return '<div class="card"><h2>'+l+'</h2><div class="stepper"><button class="sb" data-k="'+k+'" data-d="-1" aria-label="Меньше">−</button><div class="v" id="v_'+k+'">'+cfg[k]+'</div><button class="sb" data-k="'+k+'" data-d="1" aria-label="Больше">+</button></div></div>'}
 function setMode(i){cfg.mode=i;sMode=i;save();draw(true)}
 function setHand(i){cfg.hand=i;save();draw(true)}
 
@@ -1370,7 +1370,7 @@ function setup(){
  return headBack('Метание на время','Shell.toHub()')
  +'<button class="main" data-c="goStats(\'setup\')">К статистике</button>'
  +'<div class="row">'+stp('prep','Подготовка, сек')+stp('ex','Упражнение, сек')+'</div>'
- +'<div class="row">'+stp('knives','Ножей')+stp('dist','Дистанция')+'</div>'
+ +'<div class="row">'+stp('knives','Ножей')+stp('dist','Дистанция, м')+'</div>'
  +'<div class="card"><h2>Рука</h2><div class="row">'+HAND.map(function(n,i){return '<button class="'+((cfg.hand|0)==i?'on':'')+'" data-c="setHand('+i+')">'+n+'</button>'}).join('')+'</div></div>'
  +'<div class="card"><h2>Оценка попадания</h2><div class="row">'+MODES.map(function(n,i){return '<button class="'+(cfg.mode==i?'on':'')+'" data-c="setMode('+i+')">'+n+'</button>'}).join('')+'</div><div class="mdesc">'+(cfg.mode==0?'0, 10, 15 или 20 очков за каждый нож':'Отмечаем, сколько ножей попало из '+cfg.knives)+'</div></div>'
  +'<div class="card"><h2>Звук</h2><div class="row snd"><button class="'+(snd&&sig===0?'on':'')+'" data-c="pickSig(0)">Сигнал 1</button><button class="'+(snd&&sig===1?'on':'')+'" data-c="pickSig(1)">Сигнал 2</button><button class="'+(snd?'':'on')+'" data-c="togSnd()">🔕 Выкл</button></div></div>'
@@ -1696,7 +1696,7 @@ function home(){
   return headBack('Мишени','Shell.toHub()')+'<button class="main" data-c="gotoStats()">К статистике</button>'
   +'<div class="card"><h2>Мишень</h2><div class="row">'+TG.map(function(t){return '<button class="tfig tgb'+(cfg.tg==t.id?' on':'')+'" data-c="cfg.tg=\''+t.id+'\';save();draw()" aria-label="Мишень '+t.n+'">'+tgIcon(t.id,40)+'<span>'+t.n+'</span></button>'}).join('')+'</div></div>'
   +'<div class="card"><h2>Рука</h2><div class="row">'+HAND.map(function(n,i){return '<button class="'+(cfg.hand==i?'on':'')+'" data-c="cfg.hand='+i+';sHand='+i+';save();draw()">'+n+'</button>'}).join('')+'</div></div>'
-  +'<div class="row srow"><div class="card"><h2>Дистанция</h2><div class="stepper"><button data-c="chg(\'dist\',-1)">−</button><div class="v">'+cfg.dist+' <small>м</small></div><button data-c="chg(\'dist\',1)">+</button></div></div>'
+  +'<div class="row srow"><div class="card"><h2>Дистанция, м</h2><div class="stepper"><button data-c="chg(\'dist\',-1)">−</button><div class="v">'+cfg.dist+'</div><button data-c="chg(\'dist\',1)">+</button></div></div>'
   +'<div class="card"><h2>Подходов <small>(по 3 ножа)</small></h2><div class="stepper"><button data-c="chg(\'sets\',-1)">−</button><div class="v">'+cfg.sets+'</div><button data-c="chg(\'sets\',1)">+</button></div></div></div>'
   +'<button class="main" data-c="start()">Начать тренировку</button>'}
 
@@ -1800,7 +1800,7 @@ function home(){
   var h=headBack('Метание с двух рук','Shell.toHub()')+'<button class="main" data-c="gotoStats()">К статистике</button>';
   h+='<div class="row"><div class="card"><h2>Всего бросков</h2>'+stp('total',10)+'</div><div class="card"><h2>Ножей в подходе</h2>'+stp('knives',2)+'</div></div>';
   h+='<div class="card"><h2>Техника</h2><div class="row">'+TECH.map(function(t,i){return '<button class="tfig'+(cfg.tech==i?' on':'')+'" data-c="cfg.tech='+i+';save();draw()" aria-label="'+t.n+'">'+fig(t,40)+'<span>'+t.n+'</span></button>'}).join('')+'</div></div>';
-  h+='<div class="card"><h2>Дистанция</h2><div class="stepper"><button data-c="chg(\'dist\',-1)">−</button><div class="v">'+cfg.dist+' <small>м</small></div><button data-c="chg(\'dist\',1)">+</button></div></div>';
+  h+='<div class="card"><h2>Дистанция, м</h2><div class="stepper"><button data-c="chg(\'dist\',-1)">−</button><div class="v">'+cfg.dist+'</div><button data-c="chg(\'dist\',1)">+</button></div></div>';
   h+='<button class="main" data-c="start()">Начать тренировку</button>';
   return h}
 function chg(k,d){var v=cfg[k]+d;
